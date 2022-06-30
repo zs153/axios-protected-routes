@@ -24,16 +24,9 @@ export const RequireAuth = () => {
   const { user } = useAuth();
   const location = useLocation();
 
-  if (parseInt(user.rol) !== tiposRol.admin) {
-    return (
-      <Navigate
-        to={{ pathname: "/unauthorized", state: { from: location } }}
-        replace
-      />
-    );
-  }
-
-  return <Outlet />;
+  return (
+    parseInt(user.rol) !== tiposRol.admin ? <Navigate to={{ pathname: "/unauthorized", state: { from: location } }} replace /> : <Outlet />
+  )
 };
 
 export const PrivateRoute = () => {

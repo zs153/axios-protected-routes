@@ -20,7 +20,7 @@ const Lounge = () => {
     <div>
       <h1>Lounge page</h1>
       <p>
-        Hello <strong>{user?.username}</strong>!
+        Hello <strong>{user?.userId}</strong>!
       </p>
       <p>Looks like you have access to this private route!</p>
       <button onClick={logout}>Logout</button>

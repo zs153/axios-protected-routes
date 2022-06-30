@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/Auth";
 
-const Fraude = () => {
+const Usuario = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
@@ -17,9 +17,9 @@ const Fraude = () => {
 
   return (
     <div>
-      <h1>Fraude page</h1>
+      <h1>Usuario page</h1>
       <p>
-        Hello <strong>{user?.userId}</strong>!
+        Hello <strong>{user?.accessToken}</strong>!
       </p>
       <p>Looks like you have access to this private route!</p>
       <button onClick={logout}>Logout</button>
@@ -27,4 +27,4 @@ const Fraude = () => {
   )
 }
 
-export default Fraude
+export default Usuario

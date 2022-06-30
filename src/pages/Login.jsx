@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useAuth } from "../context/Auth";
 
 const Login = () => {
-  const [usuario, setUsuario] = useState('')
   const [userid, setUserid] = useState('')
   const [pwdusu, setPwdusu] = useState('')
   const [rolusu, setRolusu] = useState('1')
@@ -30,8 +29,7 @@ const Login = () => {
         pwdusu,
       })
 
-      setUsuario(result.data)
-      setUser({ userid, rol: result.data.rol });
+      setUser(result.data);
       navigate("/");
     } catch (error) {
       console.log(error)

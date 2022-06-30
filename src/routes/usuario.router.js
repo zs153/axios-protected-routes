@@ -10,11 +10,12 @@ import {
   usuario,
   usuarios,
 } from "../controllers/usuario.controller";
+import verifyRoute from "../middleware/verifyRoute";
 
 const apiUsuarioRouter = express.Router();
 
 // usuarios
-apiUsuarioRouter.post("/usuario", usuario);
+apiUsuarioRouter.post("/usuario", verifyRoute, usuario);
 apiUsuarioRouter.post("/usuarios", usuarios);
 apiUsuarioRouter.post("/usuarios/insert", insert);
 apiUsuarioRouter.post("/usuarios/update", update);

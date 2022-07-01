@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/Auth";
+import { useAuth } from "../../context/Auth";
 
 const Fraude = () => {
   const { user, setUser } = useAuth();

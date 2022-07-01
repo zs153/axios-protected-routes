@@ -6,7 +6,7 @@ import LoginPage from "./pages/Login";
 import NotFoundPage from "./pages/NotFound";
 import LoungePage from "./pages/Lounge";
 import UsuarioPage from "./pages/Usuario";
-import FraudePage from './pages/Fraude';
+import FraudesPage from './pages/fraudes/Fraudes';
 import UnauthorizedPage from "./pages/Unauthorized";
 
 const App = () => {
@@ -19,7 +19,7 @@ const App = () => {
               <Route path="/lounge" element={<LoungePage />} />
               <Route path="/usuario" element={<UsuarioPage />} />
               <Route element={<RequireAuth />}>
-                <Route path='/fraude' element={<FraudePage />} />
+                <Route path='/fraudes' element={<FraudesPage />} />
               </Route>
               <Route path="/" element={<HomePage />} />
               <Route path="*" element={<NotFoundPage />} />

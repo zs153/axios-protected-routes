@@ -51,7 +51,7 @@ const Login = () => {
           onChange={(e) => setPwdusu(e.target.value)}
           placeholder="Type password..."
         />
-        <select name="rolusu" id="cbousu" value={rolusu} onChange={(e) => setRolUser(e.target.value)}>
+        <select name="rolusu" id="cbousu" value={rolusu} onChange={(e) => setRolusu(e.target.value)}>
           <option value="1">General</option>
           <option value="2">Responsable</option>
           <option value="3">Admin</option>

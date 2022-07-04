@@ -69,8 +69,7 @@ function initialize() {
       }
 
       jwt.verify(refreshToken, `${process.env.ACCESS_REFRESH_TOKEN_SECRET}`, (err, user) => {
-        err && console.log(err)
-
+        err && console.log('Error de verificacion de token', err)
         refreshTokens = refreshTokens.filter((token) => token !== refreshToken)
 
         const newAccessToken = generateAccessToken(user)

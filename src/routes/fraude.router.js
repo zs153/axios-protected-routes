@@ -20,12 +20,13 @@ import {
   crearHitoLiquidacion,
   crearHitoSancion,
 } from '../controllers/fraude.controller'
+import verifyRoute from "../middleware/verifyRoute";
 
 const apiFraudeRouter = express.Router()
 
 // fraudes
 apiFraudeRouter.post('/fraude', fraude)
-apiFraudeRouter.post('/fraudes', fraudes)
+apiFraudeRouter.post('/fraudes', verifyRoute, fraudes)
 apiFraudeRouter.post('/fraudes/insert', crear)
 apiFraudeRouter.post('/fraudes/update', modificar)
 apiFraudeRouter.post('/fraudes/delete', borrar)

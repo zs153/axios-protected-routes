@@ -317,9 +317,7 @@ export const findAll = async (context) => {
   }
   binds.liqfra = context.liqfra
 
-
   const result = await simpleExecute(query, binds)
-
   return result.rows
 }
 export const findHitosFraude = async (context) => {

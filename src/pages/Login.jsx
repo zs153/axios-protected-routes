@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { useAuth } from "../context/Auth";
@@ -6,19 +6,9 @@ import { useAuth } from "../context/Auth";
 const Login = () => {
   const [userid, setUserid] = useState('')
   const [pwdusu, setPwdusu] = useState('')
-  const [rolusu, setRolusu] = useState('1')
 
   const { setUser } = useAuth();
   const navigate = useNavigate();
-
-  // const login = useCallback(
-  //   (e) => {
-  //     e.preventDefault();
-  //     setUser({ userid, rolUser });
-  //     navigate("/");
-  //   },
-  //   [setUser, userid, rolUser]
-  // );
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -51,11 +41,6 @@ const Login = () => {
           onChange={(e) => setPwdusu(e.target.value)}
           placeholder="Type password..."
         />
-        <select name="rolusu" id="cbousu" value={rolusu} onChange={(e) => setRolusu(e.target.value)}>
-          <option value="1">General</option>
-          <option value="2">Responsable</option>
-          <option value="3">Admin</option>
-        </select>
         <button type="submit">Login</button>
       </form>
     </div>

@@ -1,25 +1,87 @@
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import jwt_decode from 'jwt-decode'
 import NewFraude from '../../components/NewFraude'
 import Search from '../../components/Search'
 import ShowAll from '../../components/ShowAll'
-import axios from 'axios'
+import { useAuth } from "../../context/Auth";
+import FraudeList from '../../components/FraudeList'
+import Pagination from '../../components/pagination/Pagination'
 
 const Fraudes = () => {
-  const [input, setInput] = useState('');
-  const [countryList, setCountryList] = useState();
+  const estadosFraude = {
+    pendiente: 0,
+    asignado: 1,
+    resuelto: 2,
+    remitido: 3,
+  }
+  const { user } = useAuth()
+  const [input, setInput] = useState('')
+  const [fraudeList, setFraudeList] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [recordsPerPage] = useState(10)
+
+  const axiosJWT = axios.create(
+    {baseURL: 'http://localhost:8100/api'},
+  )
+  const refreshToken = async () => {    
+    try {
+      const result = await axios.post('http://localhost:8100/api/refresh', {
+        token: user.refreshToken
+      })
+      user.accessToken = result.data.accessToken
+      user.refreshToken = result.data.refreshToken
+
+      return result.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  axiosJWT.defaults.headers.common['Authorization'] = 'Bearer ' + user.accessToken
+  axiosJWT.interceptors.request.use(
+    async (config) => {
+      let currentDate = new Date()
+      const decodedToken = jwt_decode(user.accessToken)
+
+      if (decodedToken.exp * 1000 < currentDate.getTime()) {
+        const data = await refreshToken()
+        config.headers["Authorization"] = "Bearer " + data.accessToken
+      }
+
+      return config
+    },
+    (error) => {
+      return Promise.reject(error)
+    }
+  )
 
   const getFraudes = async () => {
-    try {
-      //TODO
-    } catch (error) {
-      
+    const fraude = {
+      liqfra: user.userId,
+      stafra: estadosFraude.pendiente + estadosFraude.asignado
     }
-    return await fetch('https://restcountries.eu/rest/v2/all')
-    .then(response => response.json())
-    .then(data => {
-        setCountryList(data) 
-        setCountryListDefault(data)
-      });
+    try {
+      const result = await axiosJWT.post('/fraudes', {
+        headers: { Authorization: 'Bearer ' + user.accessToken },
+        fraude,
+      })
+
+      setFraudeList(result.data)
+    } catch (error) {
+      console.log('Error',error)
+    }
   }
+
+  useEffect(() => {
+    getFraudes()
+  },[]);
+
+  const lastRecord = currentPage * recordsPerPage
+  const firstRecord = lastRecord - recordsPerPage
+  const currentRecords = fraudeList.slice(firstRecord, lastRecord)
+  const nPages = Math.ceil(fraudeList.length / recordsPerPage)
 
   return (
     <div className="page-wrapper">
@@ -38,7 +100,8 @@ const Fraudes = () => {
                 </div>
               </div>
               <div className="card-body">
-                // TODO table
+                <FraudeList lista={currentRecords} user={user}/>
+                <Pagination nPages={nPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
               </div>
             </div>
           </div>

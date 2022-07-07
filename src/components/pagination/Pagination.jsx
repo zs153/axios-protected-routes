@@ -1,38 +1,50 @@
-const Pagination = ({nPages,currentPage,setCurrentPage}) => {
-    const pageNumbers = [...Array(nPages + 1).keys()].slice(1)
+import { usePagination, DOTS } from "../../hooks/usePaginationRange"
+import classnames from 'classnames'
+import './pagination.css'
+
+const Pagination = ({ totalCount, pageSize, className, currentPage, setCurrentPage }) => {
+    const paginationRange = usePagination ({
+      currentPage,
+      totalCount,
+      pageSize,
+    })
+    
     const nextPage = () => {
-      if(currentPage !== nPages) setCurrentPage(currentPage + 1)
+      setCurrentPage(currentPage + 1)
     }
     const prevPage = () => {
-      if(currentPage !== 1) setCurrentPage(currentPage - 1)
+      setCurrentPage(currentPage - 1)
     }
-    
+
+    let lastPage = paginationRange[paginationRange.length -1]
     return (
       <nav>
-        <ul className='pagination py-1'>
-          <li className="page-item">
-            <a className="page-link" 
-              onClick={prevPage} 
-              href='#'>
-              Anterior
-            </a>
+        <ul className={classnames('pagination-container', {[className]: className})}>          
+          <li className={classnames("pagination-item", {disable: currentPage === 1})}
+            onClick={prevPage} 
+          >
+            <div className="arrow left" />
           </li>
-          {/* {pageNumbers.map(pgNumber => (            
-            <li key={pgNumber} 
-              className= {`page-item ${currentPage == pgNumber ? 'active' : ''} `} >
-              <a onClick={() => setCurrentPage(pgNumber)}  
-                className='page-link' 
-                href='#'>
-                {pgNumber}
-              </a>
-            </li>          
-          ))} */}
-          <li className="page-item">
-            <a className="page-link"
-              onClick={nextPage}
-              href='#'>
-              Siguiente
-            </a>
+
+          {paginationRange.map(pgNumber => {
+            if (pgNumber === DOTS) {
+              return <li className="pagination-item dots">&#8230;</li>;
+            }
+
+            return (
+              <li key={pgNumber} 
+                className= {classnames('pagination-item', {selected: pgNumber === currentPage})}
+                  onClick={() => setCurrentPage(pgNumber)}
+                >
+                  {pgNumber}
+              </li>
+            )
+          })}
+
+          <li className={classnames('pagination-item', {disable: currentPage === lastPage})}
+            onClick={nextPage}
+          >
+            <div className="arrow right" />
           </li>
         </ul>
       </nav>

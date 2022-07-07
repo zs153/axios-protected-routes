@@ -22,7 +22,7 @@ const FraudeList = ({lista, user}) => {
         <tbody>
           {
             lista.map((element) => {
-            if (element) {             
+            if (element) {
               return (
                 <tr key={element.IDFRAU}>
                   <FraudeRow element={element} user={user}/>

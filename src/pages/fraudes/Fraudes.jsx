@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect,   useState } from 'react'
 import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 import NewFraude from '../../components/NewFraude'
@@ -16,7 +16,6 @@ const Fraudes = () => {
     remitido: 3,
   }
   const { user } = useAuth()
-  const [input, setInput] = useState('')
   const [fraudeList, setFraudeList] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
@@ -81,7 +80,7 @@ const Fraudes = () => {
   const lastRecord = currentPage * recordsPerPage
   const firstRecord = lastRecord - recordsPerPage
   const currentRecords = fraudeList.slice(firstRecord, lastRecord)
-  const nPages = Math.ceil(fraudeList.length / recordsPerPage)
+  const nPages = fraudeList.length
 
   return (
     <div className="page-wrapper">
@@ -101,7 +100,7 @@ const Fraudes = () => {
               </div>
               <div className="card-body">
                 <FraudeList lista={currentRecords} user={user}/>
-                <Pagination nPages={nPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                <Pagination totalCount={nPages} pageSize={recordsPerPage} className={'pagination-bar'} currentPage={currentPage} setCurrentPage={setCurrentPage} />
               </div>
             </div>
           </div>

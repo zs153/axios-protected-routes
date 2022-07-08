@@ -17,8 +17,8 @@ const Fraudes = () => {
   }
   const { user } = useAuth()
   const [fraudeList, setFraudeList] = useState([])
-  const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [searchText, setSearchText] = useState('')
   const [recordsPerPage] = useState(10)
 
   const axiosJWT = axios.create(
@@ -77,6 +77,10 @@ const Fraudes = () => {
     getFraudes()
   },[]);
 
+  useEffect(() => {
+    console.log(fraudeList.filter(itm => Object.keys(itm).some(k => JSON.stringify(itm[k]).includes(searchText))).slice(firstRecord, lastRecord) )
+  }, [searchText])
+
   const lastRecord = currentPage * recordsPerPage
   const firstRecord = lastRecord - recordsPerPage
   const currentRecords = fraudeList.slice(firstRecord, lastRecord)
@@ -92,7 +96,7 @@ const Fraudes = () => {
                 <h3 className='card-title'>Fraudes</h3>
                 <div className="col-auto ms-auto">
                   <div className="d-flex">
-                    <Search />
+                    <Search searchText={searchText} setSearchText={setSearchText} />
                     <ShowAll />
                     <NewFraude />
                   </div>

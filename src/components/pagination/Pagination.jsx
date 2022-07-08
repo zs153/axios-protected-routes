@@ -19,20 +19,20 @@ const Pagination = ({ totalCount, pageSize, className, currentPage, setCurrentPa
     let lastPage = paginationRange[paginationRange.length -1]
     return (
       <nav>
-        <ul className={classnames('pagination-container', {[className]: className})}>          
-          <li className={classnames("pagination-item", {disable: currentPage === 1})}
+        <ul className={classnames('pagination-container', {[className]: className})}>
+          <li className={classnames("pagination-item", {disabled: currentPage === 1})}
             onClick={prevPage} 
           >
             <div className="arrow left" />
           </li>
 
-          {paginationRange.map(pgNumber => {
+          {paginationRange.map((pgNumber, index) => {
             if (pgNumber === DOTS) {
-              return <li className="pagination-item dots">&#8230;</li>;
+              return <li key={index} className="pagination-item dots">&#8230;</li>;
             }
 
             return (
-              <li key={pgNumber} 
+              <li key={index}
                 className= {classnames('pagination-item', {selected: pgNumber === currentPage})}
                   onClick={() => setCurrentPage(pgNumber)}
                 >
@@ -41,7 +41,7 @@ const Pagination = ({ totalCount, pageSize, className, currentPage, setCurrentPa
             )
           })}
 
-          <li className={classnames('pagination-item', {disable: currentPage === lastPage})}
+          <li className={classnames('pagination-item', {disabled: currentPage === lastPage})}
             onClick={nextPage}
           >
             <div className="arrow right" />

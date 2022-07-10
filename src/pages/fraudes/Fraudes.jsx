@@ -17,9 +17,16 @@ const Fraudes = () => {
   }
   const { user } = useAuth()
   const [fraudeList, setFraudeList] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
+  const [filteredList, setFilteredList] = useState([])
   const [searchText, setSearchText] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
   const [recordsPerPage] = useState(10)
+
+  let currentRecords = []
+  let totalRecords = 0
+  const lastRecord = currentPage * recordsPerPage
+  const firstRecord = lastRecord - recordsPerPage
 
   const axiosJWT = axios.create(
     {baseURL: 'http://localhost:8100/api'},
@@ -61,6 +68,7 @@ const Fraudes = () => {
       liqfra: user.userId,
       stafra: estadosFraude.pendiente + estadosFraude.asignado
     }
+
     try {
       const result = await axiosJWT.post('/fraudes', {
         headers: { Authorization: 'Bearer ' + user.accessToken },
@@ -68,6 +76,8 @@ const Fraudes = () => {
       })
 
       setFraudeList(result.data)
+      setFilteredList(result.data)
+      setIsLoading(false)
     } catch (error) {
       console.log('Error',error)
     }
@@ -78,13 +88,19 @@ const Fraudes = () => {
   },[]);
 
   useEffect(() => {
-    console.log(fraudeList.filter(itm => Object.keys(itm).some(k => JSON.stringify(itm[k]).includes(searchText))).slice(firstRecord, lastRecord) )
+    if (searchText !== '') {
+      const filtrado = filteredList.filter(itm => {
+        console.log(itm.keywords.includes(searchText))
+      }) 
+      console.log(filtrado)
+      setFilteredList(filteredList.filter(itm => Object.keys(itm).some(k => JSON.stringify(itm[k]).includes(searchText)))) 
+    } else {
+      setFilteredList(fraudeList)
+    }
   }, [searchText])
-
-  const lastRecord = currentPage * recordsPerPage
-  const firstRecord = lastRecord - recordsPerPage
-  const currentRecords = fraudeList.slice(firstRecord, lastRecord)
-  const nPages = fraudeList.length
+  
+  currentRecords = filteredList.slice(firstRecord, lastRecord)
+  totalRecords= filteredList.length
 
   return (
     <div className="page-wrapper">
@@ -104,7 +120,7 @@ const Fraudes = () => {
               </div>
               <div className="card-body">
                 <FraudeList lista={currentRecords} user={user}/>
-                <Pagination totalCount={nPages} pageSize={recordsPerPage} className={'pagination-bar'} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                <Pagination totalCount={totalRecords} pageSize={recordsPerPage} className={'pagination-bar'} currentPage={currentPage} setCurrentPage={setCurrentPage} />
               </div>
             </div>
           </div>

@@ -11,7 +11,13 @@ INNER JOIN tiposfraude tf ON tf.idtipo = ff.tipfra
 const largeQuery = `SELECT 
   oo.desofi,
   tt.destip,
-  ff.*,
+  ff.idfrau,
+  ff.liqfra,
+  ff.ejefra,
+  ff.nifcon,
+  ff.nomcon,
+  ff.obsfra,
+  ff.stafra,
   TO_CHAR(ff.fecfra, 'DD/MM/YYYY') "STRFEC"
 FROM fraudes ff
 INNER JOIN tiposfraude tt ON tt.idtipo = ff.tipfra
@@ -295,10 +301,16 @@ export const findAll = async (context) => {
     query += `AND ff.stafra = 1
       UNION ALL
       SELECT 
-        oo.desofi,
-        tt.destip,
-        ff.*,
-        TO_CHAR(ff.fecfra, 'DD/MM/YYYY') "STRFEC"
+      oo.desofi,
+      tt.destip,
+      ff.idfrau,
+      ff.liqfra,
+      ff.ejefra,
+      ff.nifcon,
+      ff.nomcon,
+      ff.obsfra,
+      ff.stafra,
+      TO_CHAR(ff.fecfra, 'DD/MM/YYYY') "STRFEC"
       FROM fraudes ff
       INNER JOIN tiposfraude tt ON tt.idtipo = ff.tipfra
       INNER JOIN oficinas oo ON oo.idofic = ff.ofifra
@@ -308,7 +320,13 @@ export const findAll = async (context) => {
       SELECT 
         oo.desofi,
         tt.destip,
-        ff.*,
+        ff.idfrau,
+        ff.liqfra,
+        ff.ejefra,
+        ff.nifcon,
+        ff.nomcon,
+        ff.obsfra,
+        ff.stafra,
         TO_CHAR(ff.fecfra, 'DD/MM/YYYY') "STRFEC"
       FROM fraudes ff
       INNER JOIN tiposfraude tt ON tt.idtipo = ff.tipfra

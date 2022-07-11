@@ -1,4 +1,3 @@
-import React from 'react'
 import FraudeRow from './FraudeRow'
 
 const FraudeList = ({lista, user}) => {

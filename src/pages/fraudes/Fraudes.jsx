@@ -20,6 +20,7 @@ const Fraudes = () => {
   const [filteredList, setFilteredList] = useState([])
   const [searchText, setSearchText] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [sortedField, setSortedField] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [recordsPerPage] = useState(10)
 
@@ -89,11 +90,7 @@ const Fraudes = () => {
 
   useEffect(() => {
     if (searchText !== '') {
-      const filtrado = filteredList.filter(itm => {
-        console.log(itm.keywords.includes(searchText))
-      }) 
-      console.log(filtrado)
-      setFilteredList(filteredList.filter(itm => Object.keys(itm).some(k => JSON.stringify(itm[k]).includes(searchText)))) 
+      setFilteredList(fraudeList.filter(o => Object.keys(o).some(k => JSON.stringify(o[k]).toLowerCase().includes(searchText.toLowerCase()))));
     } else {
       setFilteredList(fraudeList)
     }

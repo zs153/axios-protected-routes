@@ -4,11 +4,13 @@ import { useState } from 'react'
 
 const FraudeList = ({lista, user}) => {
   const [tableData, handleSorting] = useSortableTable(lista)
-  const [order, setOrder] = useState('des')
+  const [sortField, setSortField] = useState('')
+  const [order, setOrder] = useState(false)
 
   const handleSortingChange = (accessor) => {
     setOrder(!order)
-
+    setSortField(accessor)
+    handleSorting(sortField,setOrder)
   }
 
   return (

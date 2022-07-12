@@ -1,8 +1,15 @@
 import FraudeRow from './FraudeRow'
 import { useSortableTable } from '../hooks/useSortableTable'
+import { useState } from 'react'
 
 const FraudeList = ({lista, user}) => {
   const [tableData, handleSorting] = useSortableTable(lista)
+  const [order, setOrder] = useState('des')
+
+  const handleSortingChange = (accessor) => {
+    setOrder(!order)
+
+  }
 
   return (
     <>

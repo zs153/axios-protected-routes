@@ -1,6 +1,8 @@
 import FraudeRow from './FraudeRow'
+import { useSortableTable } from '../hooks/useSortableTable'
 
 const FraudeList = ({lista, user}) => {
+  const [tableData, handleSorting] = useSortableTable(lista)
 
   return (
     <>
@@ -8,7 +10,7 @@ const FraudeList = ({lista, user}) => {
         <thead>
           <tr className="header">
             <th className="w-4"></th>
-            <th className="w-8">Oficina</th>
+            <th className="w-8" onClick={handleSorting}>Oficina</th>
             <th className="w-6">Fecha</th>
             <th className="w-5">Ejerc</th>
             <th className="w-8">NIF</th>

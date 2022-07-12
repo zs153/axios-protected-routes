@@ -116,7 +116,7 @@ const Fraudes = () => {
                 </div>
               </div>
               <div className="card-body">
-                <FraudeList lista={currentRecords} user={user}/>
+                <FraudeList lista={currentRecords} user={user} />
                 <Pagination totalCount={totalRecords} pageSize={recordsPerPage} className={'pagination-bar'} currentPage={currentPage} setCurrentPage={setCurrentPage} />
               </div>
             </div>

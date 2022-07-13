@@ -1,25 +1,29 @@
 import FraudeRow from './FraudeRow'
-import { useSortableTable } from '../hooks/useSortableTable'
-import { useState } from 'react'
+import useSortableTable from '../hooks/useSortableTable'
+import { VisuallyHidden, BlankButton } from './styles'
 
 const FraudeList = ({lista, user}) => {
-  const [tableData, handleSorting] = useSortableTable(lista)
-  const [sortField, setSortField] = useState('')
-  const [order, setOrder] = useState(false)
+  const {items, requestSort, sortConfig} = useSortableTable(lista, props.config)
 
-  const handleSortingChange = (accessor) => {
-    setOrder(!order)
-    setSortField(accessor)
-    handleSorting(sortField,setOrder)
+  const SortButton = ({direction,id,onClick,sortBy}) => {
+    const arrows = {asc: '↓', des: '↑'}
+    const arrow = sortBy === id ? arrows[direction] : ' '
+
+    return (
+      <BlankButton id={id} onClick={onClick}>
+        {arrow}
+        <VisuallyHidden>Sort {direction}</VisuallyHidden>
+      </BlankButton>
+    )
   }
 
   return (
     <>
-      <table className="table table-vcenter table-striped sortable" id='tblFraudes'>
+      <table className="table table-vcenter table-striped">
         <thead>
           <tr className="header">
-            <th className="w-4"></th>
-            <th className="w-8" onClick={handleSorting}>Oficina</th>
+            <th className="w-4"></th>            
+            <th className="w-8" direction={sortConfig?.direction} id='desofi' onClick={() => requestSort('desofi')} sortBy={sortConfig?.key}>Oficina</th>
             <th className="w-6">Fecha</th>
             <th className="w-5">Ejerc</th>
             <th className="w-8">NIF</th>
@@ -31,7 +35,7 @@ const FraudeList = ({lista, user}) => {
         </thead>
         <tbody>
           {
-            lista.map((element) => {
+            items.map((element) => {
             if (element) {
               return (
                 <tr key={element.IDFRAU}>

@@ -1,18 +1,33 @@
 import { useState } from "react";
+import { useMemo } from "react";
 
-function useSortableTable(data) {
-  const [tableData, setTableData] = useState(data);
+const sortTableData = (array, {key, direction}) => {
+  return array.sort((a,b) => {
+    if (a[key] < b[key]) return direction === 'asc' ? -1:1;
+    if (a[key] > b[key]) return direction === 'asc' ? 1:-1;
 
-  const handleSorting = (sortField, dir) => {
-    const sorted = [...tableData].sort((a, b) => {
-      const aValue = a[sortField]
-      const bValue = b[sortField]
+    return 0
+  })
+}
 
-      return aValue > bValue ? (1 * dir) : (-1 * dir)
-    });
+const useSortableTable = (items = [], config) => {
+  const [sortConfig, setSortConfig] = useState(config)
+  const sortedItems = useMemo(() => {
+    if (!sortConfig) return items
 
-    setTableData(sorted)
+    return sortTableData(items, {...sortConfig})
+  }, [items, sortConfig])
+  const requestSort = key => {
+    let direction = 'des'
+
+    if (sortConfig && sortConfig.key === key && sortConfig?.direction === 'des') {
+      direction = 'asc';
+    }
+
+    setSortConfig({key,direction})
   }
 
-  return [tableData, handleSorting];
+  return {items: sortedItems, requestSort, sortConfig}
 }
+
+export default useSortableTable

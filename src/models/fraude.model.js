@@ -8,21 +8,64 @@ const baseQuery = `SELECT
 FROM fraudes ff
 INNER JOIN tiposfraude tf ON tf.idtipo = ff.tipfra
 `
-const largeQuery = `SELECT 
-  oo.desofi,
-  tt.destip,
-  ff.idfrau,
-  ff.liqfra,
-  ff.ejefra,
-  ff.nifcon,
-  ff.nomcon,
-  ff.obsfra,
-  ff.stafra,
-  TO_CHAR(ff.fecfra, 'DD/MM/YYYY') "STRFEC"
-FROM fraudes ff
-INNER JOIN tiposfraude tt ON tt.idtipo = ff.tipfra
-INNER JOIN oficinas oo ON oo.idofic = ff.ofifra
-WHERE ff.liqfra = :liqfra
+const largeQuery = `SELECT * FROM (  
+  SELECT 
+    oo.desofi,
+    tt.destip,
+    ff.idfrau,
+    ff.fecfra,
+    ff.liqfra,
+    ff.ejefra,
+    ff.nifcon,
+    ff.nomcon,
+    ff.obsfra,
+    ff.stafra,
+    p1.PROLIQ,
+    p1.LIQUID,
+    p1.PROSAN,
+    p1.SANCIO,
+    p1.NUMHIT,
+    p1.NUMEVE,
+    TO_CHAR(ff.fecfra, 'DD/MM/YYYY') "STRFEC"
+  FROM (
+    SELECT 
+      ff.idfrau,
+      SUM(CASE WHEN hh.tiphit = 1 THEN 1 ELSE 0 END) AS "PROLIQ",
+      SUM(CASE WHEN hh.tiphit = 2 THEN 1 ELSE 0 END) AS "LIQUID",
+      SUM(CASE WHEN hh.tiphit = 3 THEN 1 ELSE 0 END) AS "PROSAN",
+      SUM(CASE WHEN hh.tiphit = 4 THEN 1 ELSE 0 END) AS "SANCIO",
+      COUNT(hf.idhito) AS "NUMHIT",
+      COUNT(ef.ideven) AS "NUMEVE"
+    FROM fraudes ff
+    LEFT JOIN hitosfraude hf ON hf.idfrau = ff.idfrau
+    LEFT JOIN hitos hh ON hh.idhito = hf.idhito
+    LEFT JOIN eventosfraude ef ON ef.idfrau = ff.idfrau
+    LEFT JOIN eventos ee ON ee.ideven = ef.ideven
+    WHERE ff.liqfra = :liqfra
+    GROUP BY ff.idfrau
+  ) p1
+  INNER JOIN fraudes ff ON ff.idfrau = p1.idfrau
+  INNER JOIN tiposfraude tt ON tt.idtipo = ff.tipfra
+  INNER JOIN oficinas oo ON oo.idofic = ff.ofifra
+  AND BITAND(ff.stafra,1) > 0  
+`
+const resueltosQuery = `SELECT 
+    oo.desofi,
+    tt.destip,
+    ff.idfrau,
+    ff.fecfra,
+    ff.liqfra,
+    ff.ejefra,
+    ff.nifcon,
+    ff.nomcon,
+    ff.obsfra,
+    ff.stafra,
+    TO_CHAR(ff.fecfra, 'DD/MM/YYYY') "STRFEC"
+  FROM fraudes ff
+  INNER JOIN tiposfraude tt ON tt.idtipo = ff.tipfra
+  INNER JOIN oficinas oo ON oo.idofic = ff.ofifra
+  WHERE ff.liqfra = :liqfra
+  AND BITAND(ff.stafra,2) > 0
 `
 const hitosFraudeQuery = `SELECT 
   th.destip,
@@ -293,49 +336,37 @@ export const findAll = async (context) => {
   let query = largeQuery
   let binds = {}
 
-  if (!context.stafra) {
-    return null
-  }
-
   if (context.stafra === 1) {
-    query += `AND ff.stafra = 1
-      UNION ALL
-      SELECT 
-      oo.desofi,
-      tt.destip,
-      ff.idfrau,
-      ff.liqfra,
-      ff.ejefra,
-      ff.nifcon,
-      ff.nomcon,
-      ff.obsfra,
-      ff.stafra,
-      TO_CHAR(ff.fecfra, 'DD/MM/YYYY') "STRFEC"
-      FROM fraudes ff
-      INNER JOIN tiposfraude tt ON tt.idtipo = ff.tipfra
-      INNER JOIN oficinas oo ON oo.idofic = ff.ofifra
-      WHERE ff.stafra = 0`
-  } else {
     query += `UNION ALL
-      SELECT 
+      SELECT
         oo.desofi,
         tt.destip,
         ff.idfrau,
+        ff.fecfra,
         ff.liqfra,
         ff.ejefra,
         ff.nifcon,
         ff.nomcon,
         ff.obsfra,
         ff.stafra,
+        0 PROLIQ,
+        0 LIQUID,
+        0 PROSAN,
+        0 SANCIO,
+        0 NUMHIT,
+        0 NUMEVE,
         TO_CHAR(ff.fecfra, 'DD/MM/YYYY') "STRFEC"
       FROM fraudes ff
       INNER JOIN tiposfraude tt ON tt.idtipo = ff.tipfra
       INNER JOIN oficinas oo ON oo.idofic = ff.ofifra
-      WHERE ff.stafra = 0`
+      WHERE ff.stafra = 0)`
+  } else {
+    query = resueltosQuery
   }
   binds.liqfra = context.liqfra
 
   const result = await simpleExecute(query, binds)
+
   return result.rows
 }
 export const findHitosFraude = async (context) => {

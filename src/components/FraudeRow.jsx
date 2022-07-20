@@ -1,4 +1,3 @@
-import React from 'react'
 import AvatarRow from './AvatarRow'
 import MenuRow from './MenuRow'
 

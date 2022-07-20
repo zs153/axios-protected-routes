@@ -17,7 +17,7 @@ const AvatarRow = ({element}) => {
 
   return (    
     <td>
-      <div className='w-4 align-items-center py-1'>
+      <div className='w-4 align-items-center py-1 me-3'>
         <span className={`avatar avatar-rounded ${color}`}>
           <h6>{element.LIQFRA}</h6>
         </span>

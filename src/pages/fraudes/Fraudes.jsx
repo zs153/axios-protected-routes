@@ -3,7 +3,7 @@ import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 import NewFraude from '../../components/NewFraude'
 import Search from '../../components/Search'
-import ShowAll from '../../components/ShowAll'
+import ShowResueltos from '../../components/ShowResueltos'
 import { useAuth } from "../../context/Auth";
 import FraudeList from '../../components/FraudeList'
 import Pagination from '../../components/pagination/Pagination'
@@ -19,12 +19,10 @@ const Fraudes = () => {
   const [fraudeList, setFraudeList] = useState([])
   const [filteredList, setFilteredList] = useState([])
   const [searchText, setSearchText] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
-  const [sortedField, setSortedField] = useState(null)
+  const [showResueltos, setShowResueltos] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [recordsPerPage] = useState(10)
 
-  let currentRecords = []
   let totalRecords = 0
   const lastRecord = currentPage * recordsPerPage
   const firstRecord = lastRecord - recordsPerPage
@@ -32,6 +30,7 @@ const Fraudes = () => {
   const axiosJWT = axios.create(
     {baseURL: 'http://localhost:8100/api'},
   )
+
   const refreshToken = async () => {    
     try {
       const result = await axios.post('http://localhost:8100/api/refresh', {
@@ -64,12 +63,11 @@ const Fraudes = () => {
     }
   )
 
-  const getFraudes = async () => {
+  const getFraudes = async (showResueltos) => {
     const fraude = {
       liqfra: user.userId,
-      stafra: estadosFraude.pendiente + estadosFraude.asignado
+      stafra: showResueltos ? estadosFraude.resuelto : estadosFraude.pendiente + estadosFraude.asignado
     }
-
     try {
       const result = await axiosJWT.post('/fraudes', {
         headers: { Authorization: 'Bearer ' + user.accessToken },
@@ -78,15 +76,14 @@ const Fraudes = () => {
 
       setFraudeList(result.data)
       setFilteredList(result.data)
-      setIsLoading(false)
     } catch (error) {
       console.log('Error',error)
     }
   }
 
   useEffect(() => {
-    getFraudes()
-  },[]);
+    getFraudes(showResueltos)
+  },[showResueltos]);
 
   useEffect(() => {
     if (searchText !== '') {
@@ -96,7 +93,6 @@ const Fraudes = () => {
     }
   }, [searchText])
   
-  currentRecords = filteredList.slice(firstRecord, lastRecord)
   totalRecords= filteredList.length
 
   return (
@@ -110,13 +106,13 @@ const Fraudes = () => {
                 <div className="col-auto ms-auto">
                   <div className="d-flex">
                     <Search searchText={searchText} setSearchText={setSearchText} />
-                    <ShowAll />
+                    <ShowResueltos showResueltos={showResueltos} setShowResueltos={setShowResueltos} />
                     <NewFraude />
                   </div>
                 </div>
               </div>
               <div className="card-body">
-                <FraudeList lista={currentRecords} user={user} />
+                <FraudeList lista={filteredList} firstRecord={firstRecord} lastRecord={lastRecord} user={user} />
                 <Pagination totalCount={totalRecords} pageSize={recordsPerPage} className={'pagination-bar'} currentPage={currentPage} setCurrentPage={setCurrentPage} />
               </div>
             </div>

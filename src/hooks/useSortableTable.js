@@ -12,11 +12,13 @@ const sortTableData = (array, {key, direction}) => {
 
 const useSortableTable = (items = [], config) => {
   const [sortConfig, setSortConfig] = useState(config)
+  
   const sortedItems = useMemo(() => {
     if (!sortConfig) return items
 
     return sortTableData(items, {...sortConfig})
   }, [items, sortConfig])
+
   const requestSort = key => {
     let direction = 'des'
 
